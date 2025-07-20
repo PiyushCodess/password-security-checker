@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Security Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .password-input-container {
+            position: relative;
+        }
+        
+        #passwordInput {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        #passwordInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .strength-meter {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .strength-fill {
+            height: 100%;
+            transition: width 0.3s, background-color 0.3s;
+            border-radius: 5px;
+        }
+        
+        .strength-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .feedback {
+            margin-top: 15px;
+        }
+        
+        .feedback h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .feedback ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feedback li {
+            padding: 5px 0;
+            color: #666;
+        }
+        
+        .feedback li:before {
+            content: "• ";
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #ddd;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .generated-password {
+            background: #e8f4fd;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .generated-password-text {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            word-break: break-all;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 600px) {
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Password Checker</h1>
+            <p>Check your password strength and get security tips</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-group">
+                <label for="passwordInput">Enter your password:</label>
+                <div class="password-input-container">
+                    <input type="password" id="passwordInput" placeholder="Type your password here...">
+                    <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="checkPassword()">Check Strength</button>
+                <button class="btn btn-secondary" onclick="generatePassword()">Generate Secure Password</button>
+            </div>
+            
+            <div id="generatedPassword" class="generated-password">
+                <h4>Generated Secure Password:</h4>
+                <div id="generatedPasswordText" class="generated-password-text"></div>
+                <button class="btn btn-secondary" onclick="copyPassword()">Copy Password</button>
+            </div>
+            
+            <div id="result" class="result">
+                <div id="strengthText" class="strength-text"></div>
+                <div class="strength-meter">
+                    <div id="strengthFill" class="strength-fill"></div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div id="scoreValue" class="stat-value">0</div>
+                        <div class="stat-label">Score</div>
+                    </div>
+                    <div class="stat">
+                        <div id="lengthValue" class="stat-value">0</div>
+                        <div class="stat-label">Length</div>
+                    </div>
+                    <div class="stat">
+                        <div id="entropyValue" class="stat-value">0</div>
+                        <div class="stat-label">Entropy</div>
+                    </div>
+                </div>
+                
+                <div class="feedback">
+                    <h4>Recommendations:</h4>
+                    <ul id="feedbackList"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const button = document.querySelector('.toggle-password');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                button.textContent = '👁️';
+            }
+        }
+
+        function checkPassword() {
+            const password = document.getElementById('passwordInput').value;
+            
+            fetch('/check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({password: password})
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayResult(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function displayResult(data) {
+            const result = document.getElementById('result');
+            const strengthText = document.getElementById('strengthText');
+            const strengthFill = document.getElementById('strengthFill');
+            const scoreValue = document.getElementById('scoreValue');
+            const lengthValue = document.getElementById('lengthValue');
+            const entropyValue = document.getElementById('entropyValue');
+            const feedbackList = document.getElementById('feedbackList');
+            
+            strengthText.textContent = data.strength;
+            strengthText.style.color = data.color;
+            
+            const percentage = (data.score / 7) * 100;
+            strengthFill.style.width = percentage + '%';
+            strengthFill.style.backgroundColor = data.color;
+            
+            scoreValue.textContent = data.score + '/7';
+            lengthValue.textContent = data.length;
+            entropyValue.textContent = data.entropy;
+            
+            feedbackList.innerHTML = '';
+            data.feedback.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                feedbackList.appendChild(li);
+            });
+            
+            result.style.display = 'block';
+        }
+
+        function generatePassword() {
+            fetch('/generate')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('generatedPasswordText').textContent = data.password;
+                document.getElementById('generatedPassword').style.display = 'block';
+                document.getElementById('passwordInput').value = data.password;
+                checkPassword();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function copyPassword() {
+            const passwordText = document.getElementById('generatedPasswordText').textContent;
+            navigator.clipboard.writeText(passwordText).then(() => {
+                alert('Password copied to clipboard!');
+            });
+        }
+
+        // Check password as user types
+        document.getElementById('passwordInput').addEventListener('input', function() {
+            if (this.value.length > 0) {
+                checkPassword();
+            } else {
+                document.getElementById('result').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
