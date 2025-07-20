@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Password Security Checker
 A Flask web application that helps users evaluate password strength and provides security recommendations.
 Features
@@ -17,3 +18,7 @@ Backend: Flask, Python 3
 Frontend: HTML5, CSS3, JavaScript (ES6)
 Security: Cryptographic password generation, entropy calculation
 Design: Responsive CSS, modern UI/UX
+=======
+# password-security-checker
+Flask web application for checking password strength and generating secure passwords.
+>>>>>>> b6aea0954a62479f7b1b77e99ef8c6bd4f9fccb6
