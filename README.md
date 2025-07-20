@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Password Security Checker
 A Flask web application that helps users evaluate password strength and provides security recommendations.
 Features
